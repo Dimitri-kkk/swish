@@ -112,7 +112,7 @@ const Profile = () => {
             className={`profile-tab rounded-r-lg ${pathname === `/profile/${id}/liked-posts` && "!bg-dark-3"}`}
           >
             <img 
-              src={"assets/icons/like.svg"}
+              src={"/assets/icons/like.svg"}
               alt="like"
               width={20}
               height={20}
