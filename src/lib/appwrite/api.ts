@@ -1,5 +1,5 @@
 import { ID, ImageGravity, Query } from 'appwrite';
-import { INewPost, INewUser, IUpdatePost, IUpdateUser, INewComment } from "@/types";
+import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { account, appwriteConfig, avatars, databases, storage } from './config';
 
 export async function createUserAccount(user: INewUser) {
@@ -523,7 +523,7 @@ export async function updateComment(commentId: string, text: string) {
 
 export async function deleteComment(commentId: string) {
   try {
-    const status = await databases.deleteDocument(
+    await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.commentCollectionId,
       commentId

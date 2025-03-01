@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useGetPostComments, useUpdateComment, useDeleteComment } from '@/lib/react-query/queriesAndMutations';
 import { useGetUserById } from '@/lib/react-query/queriesAndMutations';
 import { formatDateString } from '@/lib/utils';
-import Loader from '@/components/shared/Loader';
 import { Link } from 'react-router-dom';
 import { IComment } from '@/types';
 import { motion } from 'framer-motion';

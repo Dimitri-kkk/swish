@@ -3,7 +3,6 @@ import { useAddComment } from '@/lib/react-query/queriesAndMutations';
 import { useUserContext } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader } from 'lucide-react';
 
 type CommentFormProps = {
   postId: string;
