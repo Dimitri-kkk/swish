@@ -1,5 +1,5 @@
 import { ID, ImageGravity, Query } from 'appwrite';
-import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
+import { INewPost, INewUser, IUpdatePost, IUpdateUser, INewComment } from "@/types";
 import { account, appwriteConfig, avatars, databases, storage } from './config';
 
 export async function createUserAccount(user: INewUser) {
@@ -463,3 +463,75 @@ export async function getUsers(limit?: number) {
       console.log(error);
     }
   }
+
+export async function addComment(postId: string, userId: string, text: string) {
+  try {
+    const newComment = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.commentCollectionId,
+      ID.unique(),
+      {
+        text,
+        postId,
+        userId,
+        createdAt: new Date().toISOString(),
+      }
+    );
+
+    return newComment;
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    throw error;
+  }
+}
+
+export async function getPostComments(postId: string) {
+  try {
+    const comments = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.commentCollectionId,
+      [
+        Query.equal("postId", postId),
+        Query.orderDesc("createdAt")
+      ]
+    );
+    
+    return comments.documents;
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    throw error;
+  }
+}
+
+export async function updateComment(commentId: string, text: string) {
+  try {
+    const updatedComment = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.commentCollectionId,
+      commentId,
+      {
+        text: text
+      }
+    );
+
+    return updatedComment;
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    throw error;
+  }
+}
+
+export async function deleteComment(commentId: string) {
+  try {
+    const status = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.commentCollectionId,
+      commentId
+    );
+
+    return { success: true, commentId };
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    throw error;
+  }
+}

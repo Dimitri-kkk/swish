@@ -55,3 +55,19 @@ export type INavLink = {
     username: string;
     password: string;
   };
+
+export interface IComment {
+  $id: string;
+  text: string;
+  postId: string;
+  userId: string;
+  createdAt: string;
+  $createdAt: string;
+  $updatedAt: string;
+}
+
+export interface INewComment {
+  text: string;
+  postId: string;
+  userId: string;
+}

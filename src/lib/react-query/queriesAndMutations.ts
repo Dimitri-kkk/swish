@@ -4,7 +4,7 @@ import {
     useQueryClient,
     useInfiniteQuery,
 } from '@tanstack/react-query'
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
+import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser, addComment, getPostComments, updateComment, deleteComment } from '../appwrite/api'
 import { INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
 import { QUERY_KEYS } from './queryKeys'
 
@@ -198,3 +198,66 @@ export const useGetUsers = (limit?: number) => {
       },
     });
   };
+
+export const useAddComment = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ postId, userId, text }: { postId: string, userId: string, text: string }) => 
+      addComment(postId, userId, text),
+    onSuccess: (data) => {
+      // Invalidate relevant queries to refresh the UI
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.postId]
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_POST_COMMENTS, data?.postId]
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
+      });
+    }
+  });
+};
+
+export const useGetPostComments = (postId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_POST_COMMENTS, postId],
+    queryFn: () => getPostComments(postId),
+    enabled: !!postId
+  });
+};
+
+export const useUpdateComment = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ commentId, text }: { commentId: string, text: string }) => 
+      updateComment(commentId, text),
+    onSuccess: (data) => {
+      // Invalidate relevant queries to refresh the UI
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_POST_COMMENTS, data?.postId]
+      });
+    }
+  });
+};
+
+export const useDeleteComment = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ commentId, postId }: { commentId: string, postId: string }) => 
+      deleteComment(commentId).then(() => ({ commentId, postId })),
+    onSuccess: (data) => {
+      console.log("Comment deleted successfully:", data);
+      // Invalidate relevant queries to refresh the UI
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_POST_COMMENTS, data.postId]
+      });
+    },
+    onError: (error) => {
+      console.error("Error deleting comment:", error);
+    }
+  });
+};

@@ -5,6 +5,7 @@ import { useUserContext } from "@/context/AuthContext";
 import { useGetPostById } from "@/lib/react-query/queriesAndMutations";
 import { multiFormatDateString } from "@/lib/utils";
 import { Link, useParams } from "react-router-dom";
+import CommentSection from "@/components/shared/CommentSection";
 
 const PostDetails = () => {
   const { id } = useParams();
@@ -81,6 +82,9 @@ const PostDetails = () => {
           </div>
         </div>
         
+      )}
+      {!isPending && post && (
+        <CommentSection postId={post.$id} />
       )}
     </div>
   )
