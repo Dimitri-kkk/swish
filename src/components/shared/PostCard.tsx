@@ -3,6 +3,8 @@ import { multiFormatDateString } from "@/lib/utils";
 import { Models } from "appwrite"
 import { Link } from "react-router-dom";
 import PostStats from "./PostStats";
+import { storage } from "@/lib/appwrite/config";
+
 
 type PostCardProps = {
     post: Models.Document;
@@ -11,6 +13,13 @@ const PostCard = ({ post }: PostCardProps) => {
   const { user } = useUserContext();
 
   if(!post.creator) return;
+
+  const imagePreviewUrl = post.imageId
+  ? storage.getFileView("672655450031b09c041a", post.imageId)
+  : '/assets/icons/profile-placeholder.svg';
+
+  console.log("Image preview URL:", imagePreviewUrl);
+
 
   return (
     <div className="post-card">
@@ -62,7 +71,7 @@ const PostCard = ({ post }: PostCardProps) => {
                 </ul>
             </div>
 
-            <img src={post.imageUrl || '/assets/icons/profile-placeholder.svg'} alt="post" className="post-card_img" />
+            <img src={imagePreviewUrl || '/assets/icons/profile-placeholder.svg'} alt="post" className="post-card_img" />
         </Link>
 
         <PostStats post={post} userId={user.id} />

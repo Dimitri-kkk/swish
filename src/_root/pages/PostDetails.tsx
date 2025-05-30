@@ -6,11 +6,18 @@ import { useGetPostById } from "@/lib/react-query/queriesAndMutations";
 import { multiFormatDateString } from "@/lib/utils";
 import { Link, useParams } from "react-router-dom";
 import CommentSection from "@/components/shared/CommentSection";
+import { storage } from "@/lib/appwrite/config";
+
 
 const PostDetails = () => {
   const { id } = useParams();
   const { data: post, isPending } = useGetPostById(id || '');
   const { user } = useUserContext();
+
+const imagePreviewUrl = post?.imageId
+  ? storage.getFileView("672655450031b09c041a", post.imageId)
+  : '/assets/icons/profile-placeholder.svg';
+
 
   const handleDeletePost = () => {}
 
@@ -19,7 +26,7 @@ const PostDetails = () => {
       {isPending ? <Loader /> : (
         <div className="post_details-card">
           <img 
-            src={post?.imageUrl}
+            src={imagePreviewUrl}
             alt="creator"
             className="post_details-img"
           />
